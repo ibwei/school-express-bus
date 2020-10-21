@@ -1,13 +1,16 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Query, Req } from '@nestjs/common'
+import { applyDecorators, Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Query, Req, UseInterceptors } from '@nestjs/common'
 import { AppService } from './app.service'
 
-@Controller()
+const GlobalDecorator = () => {
+  return applyDecorators(Controller(), UseInterceptors())
+}
+@GlobalDecorator()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
-    return this.appService.getHello()
+    return 'whhh'
   }
 
   // query 的形式
@@ -59,7 +62,7 @@ export class AppController {
       setTimeout(() => {
         x = x + 1
         resolve(x)
-      }, 3000)
+      }, 6000)
     })
     return x
   }
