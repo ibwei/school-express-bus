@@ -3,15 +3,17 @@ import { UsersService } from './users.service'
 import { Response } from 'express'
 import { LocalAuthGuard } from '../auth/local-auth.guard'
 import { AuthService } from 'src/auth/auth.service'
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 
 @Controller('users')
 export class UsersController {
-  constructor() {}
+  constructor(private usersService: UsersService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  @HttpCode(200)
-  findAll(@Req() req: Request, @Res() res: Response) {
-    return res.status(200).send({ name: 'hahah' })
+  async findAll(@Req() req: Request, @Res() res: Response) {
+    const userList = await this.usersService.findAll()
+    return res.status(200).send({ list: userList })
   }
 
   @Get('guest')

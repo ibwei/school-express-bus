@@ -1,46 +1,30 @@
 import { HttpCode, Injectable, Req, Res } from '@nestjs/common'
-import { response } from 'express'
-
-export type User = any
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { User } from './user.entity'
 
 @Injectable()
 export class UsersService {
   private readonly users: User[]
 
-  constructor() {
-    this.users = [
-      {
-        userId: 1,
-        username: 'john',
-        password: 'changeme'
-      },
-      {
-        userId: 2,
-        username: 'chris',
-        password: 'secret'
-      },
-      {
-        userId: 3,
-        username: 'maria',
-        password: 'guess'
-      }
-    ]
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>
+  ) {}
+
+  findAll(): Promise<User[]> {
+    return this.usersRepository.find()
   }
 
-  getList(): string {
-    return '222'
+  findOne(id: string): Promise<User> {
+    return this.usersRepository.findOne(id)
   }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username)
+  findOneByUserName(username: string): Promise<User> {
+    return this.usersRepository.findOne({ username: username })
   }
 
-  getMyName(th: number): string {
-    const nameList = ['ibaiwei', 'ibaifei', 'poet']
-    if (th >= nameList.length) {
-      throw new RangeError('超过指定数值')
-    }
-
-    return nameList[th]
+  async remove(id: string): Promise<void> {
+    await this.usersRepository.delete(id)
   }
 }

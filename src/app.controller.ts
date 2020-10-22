@@ -1,10 +1,11 @@
-import { applyDecorators, Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Query, Req, UseGuards, UseInterceptors, Request } from '@nestjs/common'
+import { applyDecorators, Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Query, Req, UseGuards, UseInterceptors, Request, Res } from '@nestjs/common'
 import { OnModuleInit } from '@nestjs/common/interfaces'
 import { AuthGuard } from '@nestjs/passport'
 import { AppService } from './app.service'
 import { LocalAuthGuard } from './auth/local-auth.guard'
 import { AuthService } from './auth/auth.service'
 import { JwtAuthGuard } from './auth/jwt-auth.guard'
+import { httpMessage } from './http/utils.http'
 
 const GlobalDecorator = () => {
   return applyDecorators(Controller(), UseInterceptors())
@@ -19,14 +20,13 @@ export class AppController implements OnModuleInit {
   @UseGuards(LocalAuthGuard)
   @Post('/users/auth/login')
   async login(@Request() res) {
-    //console.log('-------', res.user)
     return this.authService.login(res.user)
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user
+  getProfile(@Request() req, @Res() res) {
+    return httpMessage(res, 200, 0, { user: req.user }, '请求已经成功')
   }
 
   @Get()
