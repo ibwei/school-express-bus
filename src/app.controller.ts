@@ -1,16 +1,37 @@
-import { applyDecorators, Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Query, Req, UseInterceptors } from '@nestjs/common'
+import { applyDecorators, Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Query, Req, UseGuards, UseInterceptors, Request } from '@nestjs/common'
+import { OnModuleInit } from '@nestjs/common/interfaces'
+import { AuthGuard } from '@nestjs/passport'
 import { AppService } from './app.service'
+import { LocalAuthGuard } from './auth/local-auth.guard'
+import { AuthService } from './auth/auth.service'
+import { JwtAuthGuard } from './auth/jwt-auth.guard'
 
 const GlobalDecorator = () => {
   return applyDecorators(Controller(), UseInterceptors())
 }
 @GlobalDecorator()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+export class AppController implements OnModuleInit {
+  constructor(private readonly appService: AppService, private authService: AuthService) {}
+  onModuleInit() {
+    console.log('App controller not implemented.')
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('/users/auth/login')
+  async login(@Request() res) {
+    //console.log('-------', res.user)
+    return this.authService.login(res.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user
+  }
 
   @Get()
   getHello(): string {
-    return 'whhh'
+    return 'hahahah'
   }
 
   // query 的形式
@@ -29,8 +50,8 @@ export class AppController {
   }
 
   // post的 body 可以结合 param
-  @Post('login')
-  login(@Body() body, @Query() params: { username: string; password: string }, @Req() request) {
+  @Post('login-test')
+  login111(@Body() body, @Query() params: { username: string; password: string }, @Req() request) {
     console.log(body)
     console.log(params)
     console.log(request)
