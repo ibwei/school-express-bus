@@ -16,6 +16,10 @@ export class UsersService {
     return this.usersRepository.find()
   }
 
+  findOrderListById(id: number): Promise<User> {
+    return this.usersRepository.findOne(id)
+  }
+
   findOne(id: string): Promise<User> {
     return this.usersRepository.findOne(id)
   }

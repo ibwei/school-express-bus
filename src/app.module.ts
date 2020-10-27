@@ -11,7 +11,7 @@ import { DatabaseConfig } from './config/env.config'
 import { Connection } from 'typeorm'
 
 @Module({
-  imports: [UsersModule, AuthModule, TypeOrmModule.forRoot(DatabaseConfig)],
+  imports: [UsersModule, AuthModule, TypeOrmModule.forRoot({ ...DatabaseConfig, autoLoadEntities: true })],
   controllers: [AppController],
   providers: [AppService, { provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor }]
 })

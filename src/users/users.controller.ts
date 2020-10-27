@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Req, Res, HttpException, UseGuards, Request, Post } from '@nestjs/common'
+import { Controller, Get, HttpCode, Req, Res, HttpException, UseGuards, Request, Post, Param } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { Response } from 'express'
 import { LocalAuthGuard } from '../auth/local-auth.guard'
@@ -20,5 +20,10 @@ export class UsersController {
   @HttpCode(200)
   findGuestList(): string {
     return 'This action returns guest list'
+  }
+
+  @Get('/order/list/:id')
+  getList(@Param() { id }) {
+    return this.usersService.findOrderListById(id)
   }
 }
